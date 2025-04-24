@@ -3,9 +3,14 @@
   "version": "1.0.0",
   "description": "\"Project QR Code Generator\"",
   "main": "index.js",
+  "type": "module",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",
-  "license": "ISC"
+  "license": "ISC",
+  "dependencies": {
+    "@inquirer/prompts": "^7.5.0",
+    "qr-image": "^3.2.0"
+  }
 }
