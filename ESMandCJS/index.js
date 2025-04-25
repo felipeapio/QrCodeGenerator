@@ -11,18 +11,36 @@ const require = createRequire(import.meta.url);
 import { input } from "@inquirer/prompts"; //ESM
 import { confirm } from "@inquirer/prompts"; //ESM
 var qr = require('qr-image'); //CJS
-import {createWriteStream} from "node:fs"; //ESM
+import fs from "fs"; //ESM
 
+const writeStream = fs.createWriteStream('urls.txt');
+const pathName = writeStream.path;
 let continueBoolean;
-
+let urls = [];
 do{
-    let answer = await input({message: 'Enter your URL'});
+    let answer = await input({message: 'Enter your URL:'});
     console.log("Sua URL é: " + answer);
     var qr_svg = qr.image(answer, { type: 'svg' });
-    qr_svg.pipe(createWriteStream(`${answer}.svg`));
-
+    qr_svg.pipe(fs.createWriteStream(`${answer}.svg`));
+    urls.push(answer);
     continueBoolean = await confirm({message: 'Continue? '});
 }while(continueBoolean);
 
+//https://stackoverflow.com/questions/17614123/node-js-how-to-write-an-array-to-file
 
+// write each value of the array on the file breaking line
+urls.forEach(value => writeStream.write(`${value}
+`));
+    
+// the finish event is emitted when all data has been flushed from the stream
+writeStream.on('finish', () => {
+    console.log(`wrote all the array data to file ${pathName}`);
+});
 
+// handle the errors on the write process
+writeStream.on('error', (err) => {
+    console.error(`There is an error writing the file ${pathName} => ${err}`)
+});
+
+// close the stream
+writeStream.end();
